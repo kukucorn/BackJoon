@@ -1,7 +1,9 @@
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.LinkedList;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Set;
 
 public class Main {
 
@@ -9,69 +11,48 @@ public class Main {
 		
 		BufferedReader scan = new BufferedReader(new InputStreamReader(System.in));
 		
-		String[] inputs = scan.readLine().split(" ");
-		int height = Integer.parseInt(inputs[0]);
-		int width = Integer.parseInt(inputs[1]);
+		int size = Integer.parseInt(scan.readLine());
+		int[][] area = new int[size][size];
+		Set<Integer> heightSet = new HashSet<>();
 		
-		int[][] maze = new int[height+1][width+1];
-		
-		for(int i = 1; i < height+1; i++) {
-			String line = scan.readLine();
-			for(int j = 0; j < width; j++) {
-				if(line.charAt(j) == '1') {
-					maze[i][j+1] = Integer.MAX_VALUE;
-				}
+		for(int i = 0; i < size; i++) {
+			String[] line = scan.readLine().split(" ");
+			for(int j = 0; j < size; j++) {
+				int height = Integer.parseInt(line[j]);
+				area[i][j] = height;
+				heightSet.add(height);
 			}
 		}
 		
-		findDistanceFromStart(maze, width, height);
+		Iterator<Integer> iter = heightSet.iterator();
+		while(iter.hasNext()) {
+			int height = iter.next();
+			
+		}
 		
-		System.out.print(maze[height][width]);
+		System.out.print("");
 		
 		scan.close();
 	}
 	
-	private static void findDistanceFromStart(int[][] maze, int width, int height) {	
-		LinkedList<Pos> queue = new LinkedList<>();
+	private int findNumOfGroup(int waterHeight, int[][] area) {
+		int numOfGroup = 0;
+		boolean[][] isVisited = new boolean[area.length][area.length];
 		
-		final int[] dx = {0, 1, 0, -1};
-		final int[] dy = {1, 0, -1, 0};
-		
-		final int X_BOUNDARY = height+1;
-		final int Y_BOUNDARY = width+1;
-		
-		queue.add(new Pos(1, 1));
-		int distance = 1;
-		maze[1][1] = distance;
-		while(!queue.isEmpty()) {
-			distance++;
-			int size = queue.size();
-			for(int i = 0; i < size; i++) {
-				Pos curPos = queue.pop();
-				for(int j = 0; j < 4; j++) {
-					int x = curPos.x + dx[j];
-					int y = curPos.y + dy[j];
-					if(x < X_BOUNDARY && y < Y_BOUNDARY && distance < maze[x][y]) {
-						maze[x][y] = distance;
-						queue.add(new Pos(x, y));
+		for(int i = 0; i < area.length; i++) {
+			for(int j = 0; j < area.length; j++) {
+				if(area[i][j] > waterHeight) {
+					if(area[i][j] > waterHeight && !isVisited[i][j]) {
+						numOfGroup++;
+						findAreaInGroup(waterHeight, area, isVisited);
 					}
 				}
 			}
 		}
-	}
-}
-
-class Pos {
-	int x;
-	int y;
-	
-	public Pos(int x, int y) {
-		this.x = x;
-		this.y = y;
+		return numOfGroup;
 	}
 	
-	@Override
-	public String toString() {
-		return "[" + x + ", " + y + "]";
+	private void findAreaInGroup(int waterHeight, int[][] area, boolean[][] isVisited) {
+		
 	}
 }

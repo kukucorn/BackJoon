@@ -4,68 +4,99 @@ import java.io.InputStreamReader;
 
 public class Main {
 	
-	final static int SEA = 0;
-	final static int LAND = 1;
-	
-	// 0시 부터 시계방향으로(위, 오른쪽 위, 오른쪽, ...)
-	final static int[] dx = {0, 1, 1, 1, 0, -1, -1, -1};
-	final static int[] dy = {1, 1, 0, -1, -1, -1, 0, 1};
+	// 0시 부터 시계방향으로(위, 오른쪽, 아래, 왼쪽)
+	final static int[] dx = {-1, 0, 1, 0};
+	final static int[] dy = {0, 1, 0, -1};
 	
 	public static void main(String[] args) throws IOException {
 		BufferedReader scan = new BufferedReader(new InputStreamReader(System.in));
 		StringBuilder result = new StringBuilder();
 		
-		do {
-			String[] conditions = scan.readLine().split(" ");
-			int width = Integer.parseInt(conditions[0]);
-			int height = Integer.parseInt(conditions[1]);
-			if(width == 0 && height == 0) break;
-			
-			int[][] map = new int[height][width];
-			makeMap(scan, map, width, height);
-			
-			int numOfGroup = findIsland(map, width, height);
-			
-			result.append(numOfGroup + "\n");
-		} while(true);
 		
-		System.out.print(result);
+		int size = Integer.parseInt(scan.readLine());
+		char[][] colorMap = new char[size][size];
+		for(int i = 0; i < size; i++) {
+			String colorLine = scan.readLine();
+			for(int j = 0; j < size; j++) {
+				colorMap[i][j] = colorLine.charAt(j);
+			}
+		}
+		
+		int numOfGroupOfNormal = getNormalNum(colorMap, size);
+		int numOfGroupOfWeaknessColor = getWeaknessNum(colorMap, size);
+			
+		System.out.print(numOfGroupOfNormal + " " + numOfGroupOfWeaknessColor );
 		
 		scan.close();
 	}
 	
-	private static void makeMap(BufferedReader scan, int[][] map, int width, int height) throws IOException {
-		for(int i = 0; i < height; i++) {
-			String[] line = scan.readLine().split(" ");
-			for(int j = 0; j < width; j++) {
-				map[i][j] = Integer.parseInt(line[j]);
-			}
-		}
-	}
-	
-	private static int findIsland(int[][] map, int width, int height) {
+	private static int getNormalNum(char[][] colorMap, int size) {
 		
-		int numOfIsland = 0;
-		for(int x = 0; x < height; x++) {
-			for(int y = 0; y < width; y++) {
-				if(map[x][y] == LAND) {
-					numOfIsland++;
-					findNearIsland(map, width, height, x, y);
+		boolean[][] isVisited = new boolean[size][size];
+		int numOfGroup = 0;
+		for(int x = 0; x < size; x++) {
+			for(int y = 0; y < size; y++) {
+				if(!isVisited[x][y]) {
+					numOfGroup++;
+					findNearGroupOfNormal(colorMap, isVisited, x, y);
 				}
 			}
 		}
-		return numOfIsland;
+		return numOfGroup;
 	}
 	
-	private static void findNearIsland(int[][] map, int width, int height, int xIndex, int yIndex) {
-		map[xIndex][yIndex] = SEA;
+	private static void findNearGroupOfNormal(char[][] colorMap, boolean[][] isVisited, int xIndex, int yIndex) {
+		isVisited[xIndex][yIndex] = true;
 		
-		for(int i = 0; i < 8; i++) {
+		for(int i = 0; i < 4; i++) {
 			int x = xIndex + dx[i];
 			int y = yIndex + dy[i];
 			
-			if(0 <= x && x < height && 0 <= y && y < width) {
-				if(map[x][y] == LAND) findNearIsland(map, width, height, x, y);
+			try {
+				if(colorMap[x][y] == colorMap[xIndex][yIndex]) {
+					if(!isVisited[x][y]) findNearGroupOfNormal(colorMap, isVisited, x, y);
+				}
+			} catch(ArrayIndexOutOfBoundsException e) {
+				continue;
+			}
+		}
+		
+		return;
+	}
+	
+private static int getWeaknessNum(char[][] colorMap, int size) {
+		
+		boolean[][] isVisited = new boolean[size][size];
+		int numOfGroup = 0;
+		for(int x = 0; x < size; x++) {
+			for(int y = 0; y < size; y++) {
+				if(!isVisited[x][y]) {
+					numOfGroup++;
+					findNearGroupOfWeakness(colorMap, isVisited, x, y);
+				}
+			}
+		}
+		return numOfGroup;
+	}
+	
+	private static void findNearGroupOfWeakness(char[][] colorMap, boolean[][] isVisited, int xIndex, int yIndex) {
+		isVisited[xIndex][yIndex] = true;
+		
+		for(int i = 0; i < 4; i++) {
+			int x = xIndex + dx[i];
+			int y = yIndex + dy[i];
+			
+			try {
+				if(!isVisited[x][y]) {
+					if(colorMap[xIndex][yIndex] == 'B') {
+						if(colorMap[x][y] == 'B') findNearGroupOfWeakness(colorMap, isVisited, x, y);
+					} else {
+						if(colorMap[x][y] == 'R' || colorMap[x][y] == 'G') findNearGroupOfWeakness(colorMap, isVisited, x, y);
+					}
+				}
+				 
+			} catch(ArrayIndexOutOfBoundsException e) {
+				continue;
 			}
 		}
 		

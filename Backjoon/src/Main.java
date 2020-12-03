@@ -1,75 +1,96 @@
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
 
 public class Main {
 
-	final static int dx[] = {-1, 0, 1, 0};
-	final static int dy[] = {0, 1, 0, -1};
+   public static void main(String[] args) throws IOException {
+      
+      BufferedReader scan = new BufferedReader(new InputStreamReader(System.in));
+      //StringBuilder results = new StringBuilder();
+      
+      int nCount = Integer.parseInt(scan.readLine());
+      Node[] nodes = new Node[nCount+1];
+      for(int i = 1; i < nCount+1; i++) {
+    	  nodes[i] = new Node(i);
+      }
+      
+      String[] strNums = scan.readLine().split(" ");
+      int person1 = Integer.parseInt(strNums[0]);
+      int person2 = Integer.parseInt(strNums[1]);
+      
+      int eCount = Integer.parseInt(scan.readLine());
+      for(int i = 0; i < eCount; i++) {
+    	  String[] parsedEdge = scan.readLine().split(" ");
+    	  int num1 = Integer.parseInt(parsedEdge[0]);
+    	  int num2 = Integer.parseInt(parsedEdge[1]);
+    	  
+    	  nodes[num1].connect(nodes[num2]);
+    	  nodes[num2].connect(nodes[num1]);
+      }
+      
+      boolean[] isVisited = new boolean[nCount+1];
+      
+      // person1부터 person2까지의 촌수를 구한다.
+      int degreeOfKinship = findKinshipFrom1To2(isVisited, nodes[person1], nodes[person2]); 
+      
+      System.out.print(degreeOfKinship);
+      
+      scan.close();
+   }
+   
+   private static int findKinshipFrom1To2(boolean[] isVisited, Node startPerson, Node finishPerson) {
+	   
+	   LinkedList<Node> queue = new LinkedList<>();
+	   isVisited[startPerson.num] = true;
+	   queue.add(startPerson);
+	   
+	   int kinship = 0;
+	   
+	   while(!queue.isEmpty()) {
+		   kinship++;
+		   int size = queue.size();
+		   for(int i = 0; i < size; i++) {
+			   Node person = queue.pop();
+			   for(int j = 0; j < person.connects.size(); j++) {
+				   Node nearRelative = person.connects.get(j);
+				   if(nearRelative.num == finishPerson.num) return kinship;
+				   if(!isVisited[nearRelative.num]) {
+					   isVisited[nearRelative.num] = true;
+					   queue.add(nearRelative);
+				   }
+			   }
+		   }
+	   }
+	   
+	   return -1;
+   }
+}
+
+class Node {
+	List<Node> connects;
+	int num;
 	
-	public static void main(String[] args) throws IOException {
-		
-		BufferedReader scan = new BufferedReader(new InputStreamReader(System.in));
-		
-		int size = Integer.parseInt(scan.readLine());
-		int[][] area = new int[size][size];
-		Set<Integer> heightSet = new HashSet<>();
-		
-		for(int i = 0; i < size; i++) {
-			String[] line = scan.readLine().split(" ");
-			for(int j = 0; j < size; j++) {
-				int height = Integer.parseInt(line[j]);
-				area[i][j] = height;
-				heightSet.add(height);
-			}
-		}
-		
-		Iterator<Integer> iter = heightSet.iterator();
-		int max = 0;
-		while(iter.hasNext()) {
-			int height = iter.next();
-			max = Math.max(max, findNumOfGroup(height, area));
-		}
-		
-		System.out.print(max == 0 ? 1 : max);
-		
-		scan.close();
+	public Node(int n) {
+		this.connects = new ArrayList<>();
+		this.num = n;
 	}
 	
-	private static int findNumOfGroup(int waterHeight, int[][] area) {
-		int numOfGroup = 0;
-		boolean[][] isVisited = new boolean[area.length][area.length];
-		
-		for(int i = 0; i < area.length; i++) {
-			for(int j = 0; j < area.length; j++) {
-				if(area[i][j] > waterHeight) {
-					if(area[i][j] > waterHeight && !isVisited[i][j]) {
-						numOfGroup++;
-						findAreaInGroup(waterHeight, area, isVisited, i, j);
-					}
-				}
-			}
-		}
-		return numOfGroup;
+	public void connect(Node other) {
+		connects.add(other);
 	}
 	
-	private static void findAreaInGroup(int waterHeight, int[][] area, boolean[][] isVisited, int x, int y) {
-		
-		isVisited[x][y] = true;
-		
-		for(int i = 0; i < 4; i++) {
-			int near_x = x + dx[i];
-			int near_y = y + dy[i];
-			try {
-				if(area[near_x][near_y] > waterHeight && !isVisited[near_x][near_y]) {
-					findAreaInGroup(waterHeight, area, isVisited, near_x, near_y);
-				}
-			} catch(ArrayIndexOutOfBoundsException e) {
-				continue;
-			}
+	@Override
+	public String toString() {
+		StringBuilder sb = new StringBuilder();
+		sb.append("Node " + num + " : ");
+		for(int i = 0; i < connects.size(); i++) {
+			sb.append(connects.get(i).num + ", ");
 		}
+		
+		return sb.toString();
 	}
 }

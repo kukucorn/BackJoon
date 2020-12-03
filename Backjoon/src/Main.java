@@ -7,6 +7,9 @@ import java.util.Set;
 
 public class Main {
 
+	final static int dx[] = {-1, 0, 1, 0};
+	final static int dy[] = {0, 1, 0, -1};
+	
 	public static void main(String[] args) throws IOException {
 		
 		BufferedReader scan = new BufferedReader(new InputStreamReader(System.in));
@@ -25,17 +28,18 @@ public class Main {
 		}
 		
 		Iterator<Integer> iter = heightSet.iterator();
+		int max = 0;
 		while(iter.hasNext()) {
 			int height = iter.next();
-			
+			max = Math.max(max, findNumOfGroup(height, area));
 		}
 		
-		System.out.print("");
+		System.out.print(max == 0 ? 1 : max);
 		
 		scan.close();
 	}
 	
-	private int findNumOfGroup(int waterHeight, int[][] area) {
+	private static int findNumOfGroup(int waterHeight, int[][] area) {
 		int numOfGroup = 0;
 		boolean[][] isVisited = new boolean[area.length][area.length];
 		
@@ -44,7 +48,7 @@ public class Main {
 				if(area[i][j] > waterHeight) {
 					if(area[i][j] > waterHeight && !isVisited[i][j]) {
 						numOfGroup++;
-						findAreaInGroup(waterHeight, area, isVisited);
+						findAreaInGroup(waterHeight, area, isVisited, i, j);
 					}
 				}
 			}
@@ -52,7 +56,20 @@ public class Main {
 		return numOfGroup;
 	}
 	
-	private void findAreaInGroup(int waterHeight, int[][] area, boolean[][] isVisited) {
+	private static void findAreaInGroup(int waterHeight, int[][] area, boolean[][] isVisited, int x, int y) {
 		
+		isVisited[x][y] = true;
+		
+		for(int i = 0; i < 4; i++) {
+			int near_x = x + dx[i];
+			int near_y = y + dy[i];
+			try {
+				if(area[near_x][near_y] > waterHeight && !isVisited[near_x][near_y]) {
+					findAreaInGroup(waterHeight, area, isVisited, near_x, near_y);
+				}
+			} catch(ArrayIndexOutOfBoundsException e) {
+				continue;
+			}
+		}
 	}
 }

@@ -1,3 +1,5 @@
+package BruthForce;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -6,9 +8,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.StringTokenizer;
 
-public class Main {
-	
-	private static int result = 0;
+public class Scales_17610 {
 
 	public static void main(String[] args) throws IOException {
 
@@ -145,14 +145,14 @@ class WeightGroup {
 		}
 		return true;
 	}
-	
-	@Override
-	public String toString() {
-		String str = "합 : " + sum + ", 추 : " + weights[0];
-		
-		for(int i = 1; i < weights.length; i++) {
-			str += " ," + weights[i];
-		}
-		return str;
-	}
+//	
+//	@Override
+//	public String toString() {
+//		String str = "합 : " + sum + ", 추 : " + weights[0];
+//		
+//		for(int i = 1; i < weights.length; i++) {
+//			str += " ," + weights[i];
+//		}
+//		return str;
+//	}
 }

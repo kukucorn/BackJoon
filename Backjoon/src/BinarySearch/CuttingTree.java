@@ -1,3 +1,5 @@
+package BinarySearch;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -28,7 +30,7 @@ public class CuttingTree {
 				if(cut > 0) {
 					sum += cut;
 				}
-			}
+			} 
 			
 			if(sum == lengthOfNeed) {
 				right = mid;

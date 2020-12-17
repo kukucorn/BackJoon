@@ -1,3 +1,4 @@
+package shortestPathProblem.dijkstra;
 //package dijkstra;
 //
 //import java.io.BufferedReader;

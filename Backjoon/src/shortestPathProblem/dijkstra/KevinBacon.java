@@ -1,4 +1,6 @@
+package shortestPathProblem.dijkstra;
 //package dijkstra;
+//
 //
 //import java.io.BufferedReader;
 //import java.io.IOException;
@@ -8,17 +10,15 @@
 //import java.util.PriorityQueue;
 //import java.util.StringTokenizer;
 //
-//public class FindCityInSpecificDistance {
+//public class KevinBacon {
 //
 //	public static void main(String[] args) throws IOException {
 //
 //		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 //
 //		StringTokenizer st = new StringTokenizer(br.readLine());
-//		int vCount = Integer.parseInt(st.nextToken()); // 도시의 개수
-//		int eCount = Integer.parseInt(st.nextToken()); // 도로의 개수
-//		int distanceToFind = Integer.parseInt(st.nextToken()); // 거리 정보
-//		int startVertex = Integer.parseInt(st.nextToken()); // 출발 도시의 번호
+//		int vCount = Integer.parseInt(st.nextToken());
+//		int eCount = Integer.parseInt(st.nextToken());
 //
 //		// 그래프 초기화
 //		Graph g = new Graph(vCount);
@@ -26,24 +26,28 @@
 //			g.addEdge(new StringTokenizer(br.readLine()));
 //		}
 //
-//		// 최단거리 찾기
-//		g.dijkstra(startVertex);
-//		int[] distances = g.getDistance();
-//
-//		System.out.print(distanceToSB(distances, distanceToFind).toString());
+//		int min = Integer.MAX_VALUE;
+//		int minIndex = -1;
+//		for(int startIndex = 1; startIndex < vCount+1; startIndex++) {
+//			g.dijkstra(startIndex); // startIndex에서의 최단 거리 찾기
+//			int sumOfDistances = sum(g.getDistance());
+//			if(min > sumOfDistances) {
+//				min = sumOfDistances;
+//				minIndex = startIndex;
+//			}
+//		}
+// 
+//		System.out.print(minIndex);
 //
 //		br.close();
 //	}
 //	
-//	private static StringBuilder distanceToSB(int[] arr, int infoToFind) {
-//		StringBuilder sb = new StringBuilder();
-//		for (int i = 1; i < arr.length; i++) {
-//			if(arr[i] == infoToFind) sb.append(i).append("\n");
+//	private static int sum(int[] arr) {
+//		int num = 0;
+//		for(int i : arr) {
+//			num += i;
 //		}
-//		
-//		if(sb.length() == 0) sb.append(-1);
-//		
-//		return sb;
+//		return num;
 //	}
 //}
 //
@@ -96,8 +100,9 @@
 //	public void addEdge(StringTokenizer st) {
 //		int start = Integer.parseInt(st.nextToken());
 //		int end = Integer.parseInt(st.nextToken());
-//		//int weight = 1;
+//		//int weight = Integer.parseInt(st.nextToken()); weight가 1임
 //		edges[start].add(new Edge(start, end));
+//		edges[end].add(new Edge(end, start));
 //	}
 //	
 //	public int[] getDistance() {
@@ -108,12 +113,10 @@
 //class Edge {
 //	int start;
 //	int end;
-//	//int weight;
 //	
 //	public Edge(int s, int e) {
 //		this.start = s;
 //		this.end = e;
-//		//this.weight = w;
 //	}
 //}
 //

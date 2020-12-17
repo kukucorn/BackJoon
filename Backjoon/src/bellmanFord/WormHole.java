@@ -1,3 +1,5 @@
+package bellmanFord;
+
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -6,7 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.StringTokenizer;
 
-public class Main {
+public class WormHole {
 
 	public static void main(String[] args) throws IOException {
 
@@ -23,44 +25,35 @@ public class Main {
 			
 			Graph graph = new Graph(vertexNum);
 			for(int e = 0; e < edgeNum; e++) {
-				st = new StringTokenizer(br.readLine());
-				int start = Integer.parseInt(st.nextToken());
-				int end = Integer.parseInt(st.nextToken());
-				int weight = Integer.parseInt(st.nextToken());
-				graph.addEdge(start, end, weight);
-				graph.addEdge(end, start, weight);
+				addRoad(graph, new StringTokenizer(br.readLine()));
 			}
 			
 			for(int w = 0; w < wormHoleNum; w++) {
-				st = new StringTokenizer(br.readLine());
-				int start = Integer.parseInt(st.nextToken());
-				int end = Integer.parseInt(st.nextToken());
-				int weight = Integer.parseInt(st.nextToken());
-				graph.addEdge(start, end, -weight);
+				addWormHole(graph, new StringTokenizer(br.readLine()));
 			}
 			
 			boolean[] isVisited = new boolean[vertexNum+1];
-			int visitIndex = 1;
+			int startIndex = 1;
 			boolean hasNegCycle = false;
 			
 			// 그래프가 끊겨 있을 수도 있기에 끊겨있는 그래프 끼리의 음수 사이클 존재를 파악
 			// 한 번이라도 음수 사키을이 존재하면 YES
-			while(visitIndex <= vertexNum) {
-				if(!graph.bellmanFord(visitIndex)) { // 음수 사이클 존재
+			while(startIndex <= vertexNum) {
+				if(!graph.bellmanFord(startIndex)) { // 음수 사이클 존재
 					hasNegCycle = true;
 					break;
 				}
 				
 				int[] distances = graph.getDistance();
-				for(int i = visitIndex; i < vertexNum+1; i++) {
+				for(int i = startIndex; i < vertexNum+1; i++) {
 					if(!isVisited[i] && distances[i] != Integer.MAX_VALUE) {
 						isVisited[i] = true;
 					}
 				}
 				
-				while(isVisited[visitIndex]) {
-					visitIndex++;
-					if(visitIndex > vertexNum) break;
+				while(isVisited[startIndex]) {
+					startIndex++;
+					if(startIndex > vertexNum) break;
 				}
 			}
 			
@@ -75,6 +68,21 @@ public class Main {
 		System.out.print(sb);
 		
 		br.close();
+	}
+	
+	private static void addRoad(Graph graph, StringTokenizer st) {
+		int start = Integer.parseInt(st.nextToken());
+		int end = Integer.parseInt(st.nextToken());
+		int weight = Integer.parseInt(st.nextToken());
+		graph.addEdge(start, end, weight);
+		graph.addEdge(end, start, weight);
+	}
+	
+	private static void addWormHole(Graph graph, StringTokenizer st) {
+		int start = Integer.parseInt(st.nextToken());
+		int end = Integer.parseInt(st.nextToken());
+		int weight = Integer.parseInt(st.nextToken());
+		graph.addEdge(start, end, -weight);
 	}
 }
 
@@ -102,33 +110,6 @@ class Graph {
 		}
 	}
 
-//	public void dijkstra(int start) {
-//
-//		initDistance(); // distance arr 할당 및 값 초기화.
-//		boolean[] isVisited = new boolean[n + 1]; // 해당 노드를 방문했는지 체크할 변수
-//
-//		PriorityQueue<Route> pQueue = new PriorityQueue<>();
-//
-//		// 시작값 초기화.
-//		distance[start] = 0;
-//		pQueue.add(new Route(start, 0));
-//
-//		while(!pQueue.isEmpty() ) {
-//			Route route = pQueue.poll();
-//
-//			if(isVisited[route.dst]) continue;
-//			isVisited[route.dst] = true; 
-//
-//			for(Edge edge : edges[route.dst]) {
-//				if(route.weight + edge.weight < distance[edge.end]) {
-//					distance[edge.end] = route.weight + edge.weight;
-//					pQueue.add(new Route(edge.end, distance[edge.end]));
-//				}
-//			}
-//		}
-//	}
-	
-	
 	// 최단 거리를 찾아 distance 에 저장 후 true 리턴
     // 하지만, 음수 싸이클이 존재하면 false 리턴
     boolean bellmanFord(int start) {
@@ -175,25 +156,3 @@ class Edge {
 		this.weight = w;
 	}
 }
-//
-//class Route implements Comparable<Route> {
-//
-//	int dst;
-//	int weight;
-//
-//	public Route(int d, int w) {
-//		this.dst = d;
-//		this.weight = w;
-//	}
-//
-//	@Override
-//	public int compareTo(Route o) {
-//		// TODO Auto-generated method stub
-//		return this.weight - o.weight;
-//	}
-//
-////	@Override
-////	public String toString() {
-////		return "dst : " + dst + ", weight : " + weight;
-////	}
-//} 

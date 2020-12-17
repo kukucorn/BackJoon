@@ -8,41 +8,68 @@
 //import java.util.PriorityQueue;
 //import java.util.StringTokenizer;
 //
-//public class ShortestPath {
+//public class WalkDringkingBeer {
 //
 //	public static void main(String[] args) throws IOException {
 //
 //		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+//		StringBuilder sb = new StringBuilder();
+//		
+//		int testCount = Integer.parseInt(br.readLine());
+//		for(int test = 0; test < testCount; test++) {
+//			
+//			int martNum = Integer.parseInt(br.readLine());
+//			
+//			Pos[] posArr = new Pos[martNum+3];
+//			
+//			for(int i = 1; i < martNum+3; i++) {
+//				initPos(posArr, i, new StringTokenizer(br.readLine()));
+//			}
+//			
+//			List<Edge> edgeList = new ArrayList<>();
+//			findEdge(posArr, edgeList);
+//			
+//			// 그래프 초기화
+//			Graph g = new Graph(martNum+2);
+//			for(Edge edge : edgeList) {
+//				g.addEdge(edge);
+//			}
 //
-//		StringTokenizer st = new StringTokenizer(br.readLine());
-//		int vCount = Integer.parseInt(st.nextToken());
-//		int eCount = Integer.parseInt(st.nextToken());
-//		int startVertex = Integer.parseInt(br.readLine());
-//
-//		// 그래프 초기화
-//		Graph g = new Graph(vCount);
-//		for (int i = 0; i < eCount; i++) {
-//			g.addEdge(new StringTokenizer(br.readLine()));
+//			// 최단거리 찾기
+//			if(g.dijkstra(1, martNum+2)) sb.append("happy\n");
+//			else sb.append("sad\n");
 //		}
-//
-//		// 최단거리 찾기
-//		g.dijkstra(startVertex);
-//		int[] distance = g.getDistance();
-//
-//		System.out.print(distanceToSB(distance).toString());
+//		
+//		System.out.print(sb.toString());
 //
 //		br.close();
 //	}
 //	
-//	private static StringBuilder distanceToSB(int[] arr) {
-//		StringBuilder sb = new StringBuilder();
-//		for (int i = 1; i < arr.length; i++) {
-//			if (arr[i] == Integer.MAX_VALUE)
-//				sb.append("INF\n");
-//			else
-//				sb.append(arr[i]).append("\n");
+//	private static void initPos(Pos[] posArr, int index, StringTokenizer st) {
+//		posArr[index] = new Pos(Integer.parseInt(st.nextToken()), Integer.parseInt(st.nextToken()));
+//	}
+//
+//	private static void findEdge(Pos[] posArr, List<Edge> edgeList) {
+//		for(int i = 1; i < posArr.length-1; i++) {
+//			for(int j = i+1; j < posArr.length; j++) {
+//				int distance = Math.abs(posArr[i].x - posArr[j].x) + Math.abs(posArr[i].y - posArr[j].y);
+//				if(distance <= 1000) {
+//					edgeList.add(new Edge(i, j, 1));
+//					edgeList.add(new Edge(j, i, 1));
+//				}
+//			}
 //		}
-//		return sb;
+//	}
+//
+//}
+//
+//class Pos {
+//	int x;
+//	int y;
+//	
+//	public Pos(int x, int y) {
+//		this.x = x;
+//		this.y = y;
 //	}
 //}
 //
@@ -66,7 +93,7 @@
 //		}
 //	}
 //
-//	public void dijkstra(int start) {
+//	public boolean dijkstra(int start, int finish) {
 //		
 //		initDistance(); // distance arr 할당 및 값 초기화.
 //		boolean[] isVisited = new boolean[n + 1]; // 해당 노드를 방문했는지 체크할 변수
@@ -90,13 +117,13 @@
 //				}
 //			}
 //		}
+//		
+//		if(distance[finish] == Integer.MAX_VALUE) return false;
+//		return true;
 //	}
 //	
-//	public void addEdge(StringTokenizer st) {
-//		int start = Integer.parseInt(st.nextToken());
-//		int end = Integer.parseInt(st.nextToken());
-//		int weight = Integer.parseInt(st.nextToken());
-//		edges[start].add(new Edge(start, end, weight));
+//	public void addEdge(Edge edge) {
+//		edges[edge.start].add(edge);
 //	}
 //	
 //	public int[] getDistance() {

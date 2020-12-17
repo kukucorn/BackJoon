@@ -1,5 +1,4 @@
-package shortestPathProblem.dijkstra;
-//package dijkstra;
+//package shortestPathProblem.dijkstra;
 //
 //import java.io.BufferedReader;
 //import java.io.IOException;
